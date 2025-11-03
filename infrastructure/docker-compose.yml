@@ -45,10 +45,11 @@ services:
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_LOG_SEGMENT_BYTES: 1073741824
     healthcheck:
-      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1"]
+      interval: 30s
+      timeout: 10s
       retries: 5
+      start_period: 60s
     volumes:
       - kafka-data:/var/lib/kafka/data
     networks:
@@ -73,7 +74,7 @@ services:
       retries: 5
     volumes:
       - postgresql-data:/var/lib/postgresql/data
-      - ./scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
+      - ../scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
     networks:
       - predictive-maintenance-network
 
