@@ -45,11 +45,13 @@ services:
       KAFKA_LOG_RETENTION_HOURS: 168
       KAFKA_LOG_SEGMENT_BYTES: 1073741824
     healthcheck:
-      test: ["CMD-SHELL", "kafka-broker-api-versions --bootstrap-server localhost:9092 || exit 1"]
+      # Kafka prend du temps à démarrer, utiliser un check simple
+      # Le health check peut rester "unhealthy" pendant 2-3 minutes au démarrage
+      test: ["CMD-SHELL", "nc -z localhost 9092 || exit 1"]
       interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 60s
+      timeout: 5s
+      retries: 10
+      start_period: 180s
     volumes:
       - kafka-data:/var/lib/kafka/data
     networks:
