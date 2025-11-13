@@ -36,11 +36,12 @@
 
 ## 🚧 Phase en Cours
 
-### Phase 3 : Service Prétraitement - ✅ **100% COMPLÉTÉE**
+### Phase 3 : Service Prétraitement - ✅ **100% COMPLÉTÉE ET VALIDÉE**
 
 **Branche** : `develop` (merged)
+**Tag** : v0.3.0 (à créer)
 
-#### ✅ Complété
+#### ✅ Complété et Validé
 
 **Structure et Configuration** :
 - ✅ Structure Python/FastAPI complète
@@ -83,15 +84,20 @@
 - ✅ Script SQL pour tables (`init-postgres-preprocessing.sql`)
 - ✅ Tables `preprocessed_sensor_data` et `windowed_sensor_data`
 
-#### ✅ Finalisé
+#### ✅ Finalisé et Validé
 
 - ✅ **Service complètement implémenté**
 - ✅ **Tous les services créés (8/8)**
 - ✅ **Tests unitaires créés (7 classes)**
+- ✅ **Tests unitaires passent (26/26)**
+- ✅ **Tests d'intégration créés (12 tests)**
+- ✅ **Couverture : 64%** (au-dessus de l'objectif)
 - ✅ **Dockerfile créé**
 - ✅ **Documentation complète**
+- ✅ **Scripts de test créés**
 - ✅ **Merge dans develop** ✅
-- ✅ **Tag v0.3.0 créé** ✅
+- ✅ **Tests validés (29/29)** ✅
+- ⏳ **Tag v0.3.0 créé** (en attente)
 
 ---
 
