@@ -87,16 +87,14 @@ Write-Host "[INFO] PostgreSQL est démarré" -ForegroundColor Green
 
 # Vérifier que le réseau existe
 Write-Host "[INFO] Vérification du réseau Docker..." -ForegroundColor Green
-$networkExists = docker network ls --format "{{.Name}}" | Select-String -Pattern "predictive-maintenance"
+$networkExists = docker network ls --format "{{.Name}}" | Select-String -Pattern "predictive-maintenance-network"
 if (-not $networkExists) {
-    Write-Host "[INFO] Création du réseau predictive-maintenance..." -ForegroundColor Yellow
-    docker network create predictive-maintenance 2>&1 | Out-Null
-    if ($LASTEXITCODE -ne 0) {
-        Write-Host "[WARN] Problème lors de la création du réseau" -ForegroundColor Yellow
-    }
+    Write-Host "[WARN] Réseau predictive-maintenance-network non trouvé" -ForegroundColor Yellow
+    Write-Host "[INFO] Le réseau doit être créé par l'infrastructure Docker" -ForegroundColor Yellow
+    Write-Host "[INFO] Démarrer l'infrastructure : cd infrastructure && docker-compose up -d" -ForegroundColor Cyan
+} else {
+    Write-Host "[INFO] Réseau predictive-maintenance-network existe" -ForegroundColor Green
 }
-
-Write-Host "[INFO] Réseau Docker configuré" -ForegroundColor Green
 
 # Construire l'image si nécessaire
 if ($BuildImage) {
