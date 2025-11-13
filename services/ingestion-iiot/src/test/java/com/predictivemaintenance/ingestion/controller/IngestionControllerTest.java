@@ -1,7 +1,6 @@
 package com.predictivemaintenance.ingestion.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictivemaintenance.ingestion.model.SensorData;
 import com.predictivemaintenance.ingestion.service.IngestionService;
 import org.junit.jupiter.api.BeforeEach;
