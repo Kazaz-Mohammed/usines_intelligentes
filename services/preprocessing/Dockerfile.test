@@ -1,5 +1,11 @@
 # Dockerfile pour les tests
+# Utiliser python:3.11-slim ou python:3.11 si l'image slim n'est pas disponible
 FROM python:3.11-slim
+
+# Alternative si l'image slim n'est pas disponible :
+# FROM python:3.11
+# Ou utiliser une version spécifique :
+# FROM python:3.11.6-slim
 
 # Métadonnées
 LABEL maintainer="predictive-maintenance-team"
