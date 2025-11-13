@@ -12,11 +12,11 @@ services:
       - SERVICE_NAME=preprocessing-service
       - SERVICE_PORT=8082
       - LOG_LEVEL=INFO
-      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9092
       - KAFKA_CONSUMER_GROUP=preprocessing-service
       - KAFKA_TOPIC_INPUT=sensor-data
       - KAFKA_TOPIC_OUTPUT=preprocessed-data
-      - DATABASE_HOST=postgresql
+      - DATABASE_HOST=postgresql-test
       - DATABASE_PORT=5432
       - DATABASE_NAME=predictive_maintenance
       - DATABASE_USER=pmuser
@@ -27,9 +27,9 @@ services:
       - ENABLE_DENOISING=true
       - ENABLE_FREQUENCY_ANALYSIS=true
     depends_on:
-      kafka:
+      kafka-test:
         condition: service_healthy
-      postgresql:
+      postgresql-test:
         condition: service_healthy
     networks:
       - predictive-maintenance
@@ -39,21 +39,21 @@ services:
       - ./htmlcov:/app/htmlcov
     command: pytest tests/ -v --tb=short --cov=app --cov-report=html
 
-  # Kafka (utilise l'infrastructure existante)
-  kafka:
+  # Kafka
+  kafka-test:
     image: confluentinc/cp-kafka:7.5.0
     container_name: kafka-test
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-test:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
     ports:
-      - "9092:9092"
+      - "9093:9092"  # Port différent pour éviter les conflits
     depends_on:
-      zookeeper:
+      zookeeper-test:
         condition: service_healthy
     networks:
       - predictive-maintenance
@@ -64,8 +64,8 @@ services:
       retries: 5
       start_period: 60s
 
-  # Zookeeper (utilise l'infrastructure existante)
-  zookeeper:
+  # Zookeeper
+  zookeeper-test:
     image: confluentinc/cp-zookeeper:7.5.0
     container_name: zookeeper-test
     environment:
@@ -82,8 +82,8 @@ services:
       retries: 5
       start_period: 30s
 
-  # PostgreSQL + TimescaleDB (utilise l'infrastructure existante)
-  postgresql:
+  # PostgreSQL + TimescaleDB
+  postgresql-test:
     image: timescale/timescaledb:latest-pg16
     container_name: postgresql-test
     environment:
@@ -91,10 +91,10 @@ services:
       POSTGRES_USER: pmuser
       POSTGRES_PASSWORD: pmpassword
     ports:
-      - "5432:5432"
+      - "5433:5432"  # Port différent pour éviter les conflits
     volumes:
       - postgresql-test-data:/var/lib/postgresql/data
-      - ../../scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+      - ../../../scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
     networks:
       - predictive-maintenance
     healthcheck:
