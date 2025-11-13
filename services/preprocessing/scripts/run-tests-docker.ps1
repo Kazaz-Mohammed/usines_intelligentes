@@ -48,7 +48,7 @@ if ($LASTEXITCODE -ne 0) {
 
 # Démarrer les services dépendants
 Write-Host "[INFO] Démarrage des services dépendants (Kafka, PostgreSQL)..." -ForegroundColor Green
-docker-compose -f docker-compose.test.yml up -d kafka zookeeper postgresql
+docker-compose -f docker-compose.test.yml up -d kafka-test zookeeper-test postgresql-test
 
 # Attendre que les services soient prêts
 Write-Host "[INFO] Attente que les services soient prêts..." -ForegroundColor Green
