@@ -16,14 +16,13 @@ ENV PYTHONUNBUFFERED=1 \
 # Répertoire de travail
 WORKDIR /app
 
-# Installation des dépendances système (Alpine)
-RUN apk add --no-cache \
+# Installation des dépendances système
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     g++ \
-    postgresql-dev \
-    musl-dev \
+    libpq-dev \
     netcat-openbsd \
-    linux-headers
+    && rm -rf /var/lib/apt/lists/*
 
 # Copier requirements.txt
 COPY requirements.txt .
