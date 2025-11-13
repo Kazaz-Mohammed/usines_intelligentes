@@ -1,0 +1,114 @@
+# Docker Compose pour les tests d'intégration
+version: '3.8'
+
+services:
+  # Service de test
+  preprocessing-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    container_name: preprocessing-test
+    environment:
+      - SERVICE_NAME=preprocessing-service
+      - SERVICE_PORT=8082
+      - LOG_LEVEL=INFO
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - KAFKA_CONSUMER_GROUP=preprocessing-service
+      - KAFKA_TOPIC_INPUT=sensor-data
+      - KAFKA_TOPIC_OUTPUT=preprocessed-data
+      - DATABASE_HOST=postgresql
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=predictive_maintenance
+      - DATABASE_USER=pmuser
+      - DATABASE_PASSWORD=pmpassword
+      - WINDOW_SIZE=100
+      - WINDOW_OVERLAP=0.5
+      - OUTLIER_THRESHOLD=3.0
+      - ENABLE_DENOISING=true
+      - ENABLE_FREQUENCY_ANALYSIS=true
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgresql:
+        condition: service_healthy
+    networks:
+      - predictive-maintenance
+    volumes:
+      - ./tests:/app/tests
+      - ./app:/app/app
+      - ./htmlcov:/app/htmlcov
+    command: pytest tests/ -v --tb=short --cov=app --cov-report=html
+
+  # Kafka (utilise l'infrastructure existante)
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka-test
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    ports:
+      - "9092:9092"
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    networks:
+      - predictive-maintenance
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+  # Zookeeper (utilise l'infrastructure existante)
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper-test
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - predictive-maintenance
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # PostgreSQL + TimescaleDB (utilise l'infrastructure existante)
+  postgresql:
+    image: timescale/timescaledb:latest-pg16
+    container_name: postgresql-test
+    environment:
+      POSTGRES_DB: predictive_maintenance
+      POSTGRES_USER: pmuser
+      POSTGRES_PASSWORD: pmpassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgresql-test-data:/var/lib/postgresql/data
+      - ../../scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql
+    networks:
+      - predictive-maintenance
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pmuser -d predictive_maintenance"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+networks:
+  predictive-maintenance:
+    name: predictive-maintenance
+    external: true
+
+volumes:
+  postgresql-test-data:
+
