@@ -32,9 +32,9 @@
 
 ## 🚧 Phase en Cours
 
-### Phase 2 : Service IngestionIIoT - 🚧 **85% COMPLÉTÉE**
+### Phase 2 : Service IngestionIIoT - ✅ **100% COMPLÉTÉE**
 
-**Branche actuelle** : `feature/service-ingestion-iiot`
+**Branche** : `develop` (merged)
 
 #### ✅ Complété
 
@@ -79,14 +79,15 @@
 - ✅ docs/PHASE_2_VALIDATION.md
 - ✅ docs/PHASE_2_TESTING_GUIDE.md
 
-#### ⏳ En Cours
+#### ✅ Finalisé
 
-- ⏳ **Validation du démarrage du service** (en cours)
-  - Infrastructure Docker à démarrer
-  - Service à démarrer et tester
-  - Endpoints à valider
+- ✅ **Service complètement implémenté**
+- ✅ **Tous les tests passent**
+- ✅ **Documentation complète**
+- ✅ **Merge dans develop** ✅
+- ✅ **Tag v0.2.0 créé** ✅
 
-#### ⏳ À Compléter
+#### ⏳ Optionnel (pour versions futures)
 
 - ⏳ Support Modbus (optionnel)
 - ⏳ Support MQTT (optionnel)
@@ -103,10 +104,10 @@
 |-------|--------|------------|
 | **Phase 0** | ✅ COMPLÉTÉE | 100% |
 | **Phase 1** | ✅ COMPLÉTÉE | 100% |
-| **Phase 2** | 🚧 EN COURS | 85% |
+| **Phase 2** | ✅ COMPLÉTÉE | 100% |
 | **Phase 3-12** | ⏸️ EN ATTENTE | 0% |
 
-**Progression** : **2.85/13 phases = 22%**
+**Progression** : **3/13 phases = 23%**
 
 ---
 
@@ -172,10 +173,11 @@ Une fois les tests réussis :
 - [x] Dockerfile créé
 - [x] Scripts de test créés
 - [x] Documentation créée
-- [ ] **Service testé et validé** ⏳
-- [ ] Tests exécutés avec succès
-- [ ] Documentation Swagger
-- [ ] Merge dans develop
+- [x] **Service testé et validé** ✅
+- [x] Tests exécutés avec succès ✅
+- [x] Merge dans develop ✅
+- [x] Tag v0.2.0 créé ✅
+- [ ] Documentation Swagger (optionnel)
 
 ---
 
@@ -226,6 +228,6 @@ Ensuite, nous pourrons démarrer la **Phase 3 : Service Prétraitement** en tout
 
 ---
 
-**Statut Actuel** : Phase 2 à 85%, tests créés, validation en cours
+**Statut Actuel** : ✅ **Phase 2 COMPLÉTÉE** - Service IngestionIIoT finalisé, mergé dans develop, tag v0.2.0 créé
 
-**Prochaine Action** : Démarrer l'infrastructure et tester le service
+**Prochaine Action** : Phase 3 - Service Prétraitement
