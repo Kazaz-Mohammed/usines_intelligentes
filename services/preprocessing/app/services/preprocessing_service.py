@@ -3,7 +3,6 @@ Service principal d'orchestration du prétraitement
 """
 import logging
 from typing import List, Dict, Optional
-from collections import defaultdict
 from datetime import datetime
 from collections import defaultdict
 
