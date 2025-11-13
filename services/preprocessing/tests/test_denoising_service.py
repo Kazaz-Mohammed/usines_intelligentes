@@ -43,11 +43,14 @@ class TestDenoisingService:
     
     def test_denoise_single_sensor_butterworth(self, denoising_service, noisy_data):
         """Test débruitage avec filtre Butterworth"""
+        # Utiliser une fréquence de coupure raisonnable (moitié de la fréquence d'échantillonnage)
+        # Les données ont un intervalle de 1 seconde, donc sampling_rate = 1 Hz
+        # Utiliser highcut = 0.1 Hz pour un filtre passe-bas
         result = denoising_service.denoise_single_sensor(
             noisy_data,
             method="butterworth",
             lowcut=None,
-            highcut=5.0  # Filtre passe-bas à 5 Hz
+            highcut=0.1  # Filtre passe-bas à 0.1 Hz (normalisé pour sampling_rate = 1 Hz)
         )
         
         assert len(result) == len(noisy_data)
@@ -56,10 +59,10 @@ class TestDenoisingService:
     
     def test_denoise_single_sensor_moving_average(self, denoising_service, noisy_data):
         """Test débruitage avec moyenne mobile"""
+        # La méthode utilise window_size=5 par défaut
         result = denoising_service.denoise_single_sensor(
             noisy_data,
-            method="moving_average",
-            window_size=5
+            method="moving_average"
         )
         
         assert len(result) == len(noisy_data)
@@ -68,11 +71,10 @@ class TestDenoisingService:
     
     def test_denoise_single_sensor_savgol(self, denoising_service, noisy_data):
         """Test débruitage avec filtre Savitzky-Golay"""
+        # La méthode utilise window_length=5, polyorder=2 par défaut
         result = denoising_service.denoise_single_sensor(
             noisy_data,
-            method="savgol",
-            window_length=5,
-            polyorder=2
+            method="savgol"
         )
         
         assert len(result) == len(noisy_data)
