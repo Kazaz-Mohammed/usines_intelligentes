@@ -49,14 +49,15 @@ class TimescaleDBServiceTest {
                 .metadata(new HashMap<>())
                 .sourceType("OPC_UA")
                 .build();
-
-        when(objectMapper.writeValueAsString(any(Map.class))).thenReturn("{}");
-        when(jdbcTemplate.update(anyString(), any())).thenReturn(1);
     }
 
     @Test
     @DisplayName("Should insert sensor data into TimescaleDB")
-    void testInsertSensorData() {
+    void testInsertSensorData() throws Exception {
+        // Given
+        lenient().when(objectMapper.writeValueAsString(any(Map.class))).thenReturn("{}");
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
+        
         // When
         timescaleDBService.insertSensorData(testSensorData);
 
@@ -66,15 +67,19 @@ class TimescaleDBServiceTest {
 
         Object[] args = argsCaptor.getValue();
         assertEquals(7, args.length);
-        assertEquals("ASSET001", args[2]);
-        assertEquals("SENSOR001", args[3]);
-        assertEquals(25.5, args[4]);
+        // Order: timestamp, assetId, sensorId, value, unit, quality, metadata
+        assertEquals("ASSET001", args[1]);
+        assertEquals("SENSOR001", args[2]);
+        assertEquals(25.5, args[3]);
     }
 
     @Test
     @DisplayName("Should insert batch of sensor data")
-    void testInsertBatch() {
+    void testInsertBatch() throws Exception {
         // Given
+        lenient().when(objectMapper.writeValueAsString(any(Map.class))).thenReturn("{}");
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
+        
         List<SensorData> dataList = new ArrayList<>();
         dataList.add(testSensorData);
         dataList.add(SensorData.builder()
@@ -92,13 +97,15 @@ class TimescaleDBServiceTest {
         timescaleDBService.insertBatch(dataList);
 
         // Then
-        verify(jdbcTemplate, times(2)).update(anyString(), any());
+        verify(jdbcTemplate, times(2)).update(anyString(), any(Object[].class));
     }
 
     @Test
     @DisplayName("Should handle empty metadata")
     void testInsertWithEmptyMetadata() throws Exception {
         // Given
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenReturn(1);
+        
         SensorData dataWithNullMetadata = SensorData.builder()
                 .timestamp(Instant.now())
                 .assetId("ASSET001")
@@ -114,14 +121,14 @@ class TimescaleDBServiceTest {
         timescaleDBService.insertSensorData(dataWithNullMetadata);
 
         // Then
-        verify(jdbcTemplate, times(1)).update(anyString(), any());
+        verify(jdbcTemplate, times(1)).update(anyString(), any(Object[].class));
     }
 
     @Test
     @DisplayName("Should handle database error")
     void testInsertWithDatabaseError() {
         // Given
-        when(jdbcTemplate.update(anyString(), any())).thenThrow(new RuntimeException("DB error"));
+        when(jdbcTemplate.update(anyString(), any(Object[].class))).thenThrow(new RuntimeException("DB error"));
 
         // When/Then
         assertThrows(RuntimeException.class, () -> {
