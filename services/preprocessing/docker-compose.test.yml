@@ -1,8 +1,9 @@
 # Docker Compose pour les tests d'intégration
+# Utilise l'infrastructure existante (Kafka, PostgreSQL)
 version: '3.8'
 
 services:
-  # Service de test
+  # Service de test (utilise l'infrastructure existante)
   preprocessing-test:
     build:
       context: .
@@ -12,11 +13,11 @@ services:
       - SERVICE_NAME=preprocessing-service
       - SERVICE_PORT=8082
       - LOG_LEVEL=INFO
-      - KAFKA_BOOTSTRAP_SERVERS=kafka-test:9092
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:9092
       - KAFKA_CONSUMER_GROUP=preprocessing-service
       - KAFKA_TOPIC_INPUT=sensor-data
       - KAFKA_TOPIC_OUTPUT=preprocessed-data
-      - DATABASE_HOST=postgresql-test
+      - DATABASE_HOST=postgresql
       - DATABASE_PORT=5432
       - DATABASE_NAME=predictive_maintenance
       - DATABASE_USER=pmuser
@@ -26,11 +27,6 @@ services:
       - OUTLIER_THRESHOLD=3.0
       - ENABLE_DENOISING=true
       - ENABLE_FREQUENCY_ANALYSIS=true
-    depends_on:
-      kafka-test:
-        condition: service_healthy
-      postgresql-test:
-        condition: service_healthy
     networks:
       - predictive-maintenance
     volumes:
@@ -38,77 +34,12 @@ services:
       - ./app:/app/app
       - ./htmlcov:/app/htmlcov
     command: pytest tests/ -v --tb=short --cov=app --cov-report=html
-
-  # Kafka
-  kafka-test:
-    image: confluentinc/cp-kafka:7.5.0
-    container_name: kafka-test
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-test:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-test:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    ports:
-      - "9093:9092"  # Port différent pour éviter les conflits
-    depends_on:
-      zookeeper-test:
-        condition: service_healthy
-    networks:
-      - predictive-maintenance
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "9092"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 60s
-
-  # Zookeeper
-  zookeeper-test:
-    image: confluentinc/cp-zookeeper:7.5.0
-    container_name: zookeeper-test
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - "2181:2181"
-    networks:
-      - predictive-maintenance
-    healthcheck:
-      test: ["CMD", "nc", "-z", "localhost", "2181"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-
-  # PostgreSQL + TimescaleDB
-  postgresql-test:
-    image: timescale/timescaledb:latest-pg16
-    container_name: postgresql-test
-    environment:
-      POSTGRES_DB: predictive_maintenance
-      POSTGRES_USER: pmuser
-      POSTGRES_PASSWORD: pmpassword
-    ports:
-      - "5433:5432"  # Port différent pour éviter les conflits
-    volumes:
-      - postgresql-test-data:/var/lib/postgresql/data
-      - ../../../scripts/init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
-    networks:
-      - predictive-maintenance
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pmuser -d predictive_maintenance"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
+    # Ne pas dépendre des services (ils doivent être démarrés séparément)
+    # depends_on:
+    #   - kafka
+    #   - postgresql
 
 networks:
   predictive-maintenance:
     name: predictive-maintenance
     external: true
-
-volumes:
-  postgresql-test-data:
-

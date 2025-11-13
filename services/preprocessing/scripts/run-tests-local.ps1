@@ -47,12 +47,30 @@ $postgresRunning = docker ps --filter "name=postgresql" --format "{{.Names}}" | 
 
 if ($kafkaRunning -and $postgresRunning) {
     Write-Host "[INFO] Infrastructure Docker démarrée" -ForegroundColor Green
+    
+    # Configurer les variables d'environnement pour les tests d'intégration
+    $env:KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
+    $env:DATABASE_HOST = "localhost"
+    $env:DATABASE_PORT = "5432"
+    $env:DATABASE_NAME = "predictive_maintenance"
+    $env:DATABASE_USER = "pmuser"
+    $env:DATABASE_PASSWORD = "pmpassword"
+    
+    Write-Host "[INFO] Variables d'environnement configurées pour les tests d'intégration" -ForegroundColor Green
 } else {
     Write-Host "[WARN] Infrastructure Docker non démarrée" -ForegroundColor Yellow
     Write-Host "[INFO] Les tests d'intégration nécessitent Kafka et PostgreSQL" -ForegroundColor Yellow
     Write-Host "[INFO] Pour démarrer l'infrastructure :" -ForegroundColor Yellow
     Write-Host "  cd infrastructure" -ForegroundColor Cyan
     Write-Host "  docker-compose up -d" -ForegroundColor Cyan
+    Write-Host ""
+    Write-Host "[INFO] Continuation avec les tests unitaires uniquement..." -ForegroundColor Yellow
+    
+    # Forcer les tests unitaires uniquement
+    if ($TestType -eq "all" -or $TestType -eq "integration") {
+        Write-Host "[INFO] Passage aux tests unitaires uniquement (infrastructure non disponible)" -ForegroundColor Yellow
+        $TestType = "unit"
+    }
 }
 
 # Exécuter les tests
