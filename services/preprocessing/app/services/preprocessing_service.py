@@ -232,7 +232,7 @@ class PreprocessingService:
         result = []
         
         # Grouper par asset et sensor
-        grouped: Dict[str, Dict[str, List[SensorData]] = defaultdict(lambda: defaultdict(list))
+        grouped: Dict[str, Dict[str, List[SensorData]]] = defaultdict(lambda: defaultdict(list))
         
         for sensor_data in sensor_data_list:
             grouped[sensor_data.asset_id][sensor_data.sensor_id].append(sensor_data)
