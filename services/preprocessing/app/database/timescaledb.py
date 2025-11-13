@@ -24,6 +24,12 @@ class TimescaleDBService:
     def _create_pool(self):
         """Crée le pool de connexions"""
         try:
+            import sys
+            import os
+            # Forcer l'encodage UTF-8 pour éviter les problèmes sur Windows
+            if sys.platform == 'win32':
+                os.environ['PGCLIENTENCODING'] = 'UTF8'
+            
             self.pool = SimpleConnectionPool(
                 minconn=1,
                 maxconn=10,
@@ -31,12 +37,15 @@ class TimescaleDBService:
                 port=settings.database_port,
                 database=settings.database_name,
                 user=settings.database_user,
-                password=settings.database_password
+                password=settings.database_password,
+                connect_timeout=5
             )
-            logger.info("Pool de connexions TimescaleDB créé")
+            logger.info(f"Pool de connexions TimescaleDB créé: {settings.database_host}:{settings.database_port}/{settings.database_name}")
         except Exception as e:
             logger.error(f"Erreur lors de la création du pool: {e}", exc_info=True)
+            logger.error(f"Configuration: host={settings.database_host}, port={settings.database_port}, db={settings.database_name}, user={settings.database_user}")
             self.pool = None
+            # Ne pas lancer l'exception, laisser les tests gérer
     
     @contextmanager
     def get_connection(self):
