@@ -64,7 +64,7 @@ class TimescaleDBService:
                         INSERT INTO preprocessed_sensor_data 
                         (time, asset_id, sensor_id, value, unit, quality, source_type, preprocessing_metadata, frequency_analysis)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s::jsonb, %s::jsonb)
-                        ON CONFLICT DO NOTHING
+                        ON CONFLICT (time, asset_id, sensor_id) DO NOTHING
                     """
                     
                     import json

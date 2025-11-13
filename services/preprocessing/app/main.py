@@ -71,4 +71,3 @@ if __name__ == "__main__":
         port=settings.service_port,
         reload=True
     )
-
