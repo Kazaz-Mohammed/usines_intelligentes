@@ -10,6 +10,8 @@ import org.eclipse.milo.opcua.sdk.client.api.identity.AnonymousProvider;
 import org.eclipse.milo.opcua.stack.client.DiscoveryClient;
 import org.eclipse.milo.opcua.stack.core.UaException;
 import org.eclipse.milo.opcua.stack.core.types.builtin.*;
+import org.eclipse.milo.opcua.stack.core.types.builtin.unsigned.UInteger;
+import org.eclipse.milo.opcua.stack.core.types.enumerated.TimestampsToReturn;
 import org.eclipse.milo.opcua.stack.core.types.structured.EndpointDescription;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +49,7 @@ public class OPCUAService {
             OpcUaClientConfig config = OpcUaClientConfig.builder()
                     .setEndpoint(endpoint)
                     .setIdentityProvider(new AnonymousProvider())
-                    .setRequestTimeout(opcuaConfig.getRequestTimeout())
+                    .setRequestTimeout(UInteger.valueOf(opcuaConfig.getRequestTimeout()))
                     .build();
 
             client = OpcUaClient.create(config);
@@ -64,8 +66,8 @@ public class OPCUAService {
      * Lit une valeur depuis un node OPC UA
      */
     public SensorData readNode(OPCUAConfig.NodeConfig nodeConfig) {
-        if (client == null || !client.isConnected()) {
-            log.warn("OPC UA client not connected");
+        if (client == null) {
+            log.warn("OPC UA client not initialized");
             return null;
         }
 
@@ -121,7 +123,7 @@ public class OPCUAService {
      * Déconnecte du serveur OPC UA
      */
     public void disconnect() {
-        if (client != null && client.isConnected()) {
+        if (client != null) {
             try {
                 client.disconnect().get();
                 log.info("Disconnected from OPC UA server");
