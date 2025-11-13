@@ -1,5 +1,6 @@
 package com.predictivemaintenance.ingestion.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.predictivemaintenance.ingestion.model.SensorData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class TimescaleDBService {
 
     private final JdbcTemplate jdbcTemplate;
+    private final ObjectMapper objectMapper;
 
     private static final String INSERT_QUERY = """
         INSERT INTO raw_sensor_data 
@@ -34,6 +36,8 @@ public class TimescaleDBService {
     @Transactional
     public void insertSensorData(SensorData sensorData) {
         try {
+            String metadataJson = convertMetadataToJson(sensorData.getMetadata());
+            
             jdbcTemplate.update(INSERT_QUERY,
                 Timestamp.from(sensorData.getTimestamp()),
                 sensorData.getAssetId(),
@@ -41,7 +45,7 @@ public class TimescaleDBService {
                 sensorData.getValue(),
                 sensorData.getUnit(),
                 sensorData.getQuality(),
-                convertMetadataToJson(sensorData.getMetadata())
+                metadataJson
             );
             log.debug("Inserted sensor data: asset={}, sensor={}", 
                 sensorData.getAssetId(), sensorData.getSensorId());
@@ -71,8 +75,11 @@ public class TimescaleDBService {
         if (metadata == null || metadata.isEmpty()) {
             return "{}";
         }
-        // Simple conversion - en production, utiliser Jackson ObjectMapper
-        return "{}"; // TODO: Implémenter conversion JSON
+        try {
+            return objectMapper.writeValueAsString(metadata);
+        } catch (Exception e) {
+            log.warn("Failed to convert metadata to JSON, using empty object", e);
+            return "{}";
+        }
     }
 }
-
