@@ -1,6 +1,6 @@
 # 📍 État Actuel du Projet - Où Nous En Sommes
 
-## Date : 3 novembre 2025
+## Date : 13 novembre 2025
 
 ---
 
@@ -23,78 +23,76 @@
 - ✅ **Merge dans develop** ✅
 - ✅ **Tag v0.1.0 créé et pushé** ✅
 
-**Statut Git** :
-- Branche : `develop` (merged)
-- Tag : `v0.1.0`
-- Code : Merged et pushé sur GitHub
+### Phase 2 : Service IngestionIIoT - ✅ **100% COMPLÉTÉE**
+- ✅ Service Spring Boot complet
+- ✅ 7 services implémentés
+- ✅ API REST avec 3 endpoints
+- ✅ 9 classes de tests (tous passants)
+- ✅ Documentation complète
+- ✅ **Merge dans develop** ✅
+- ✅ **Tag v0.2.0 créé** ✅
 
 ---
 
 ## 🚧 Phase en Cours
 
-### Phase 2 : Service IngestionIIoT - ✅ **100% COMPLÉTÉE**
+### Phase 3 : Service Prétraitement - 🚧 **90% COMPLÉTÉE**
 
-**Branche** : `develop` (merged)
+**Branche actuelle** : `feature/service-preprocessing`
 
 #### ✅ Complété
 
 **Structure et Configuration** :
-- ✅ Structure Spring Boot complète
-- ✅ pom.xml avec toutes les dépendances
-- ✅ application.yml configuré
-- ✅ application-local.yml (pour tests locaux)
+- ✅ Structure Python/FastAPI complète
+- ✅ requirements.txt avec dépendances
+- ✅ Configuration (app/config.py)
+- ✅ Modèles de données (SensorData, PreprocessedData, WindowedData)
 - ✅ Dockerfile créé
+- ✅ docker-compose.yml créé
+- ✅ .dockerignore créé
 
 **Services Implémentés** :
-- ✅ DataNormalizationService (normalisation complète)
+- ✅ KafkaConsumerService (consommation Kafka)
 - ✅ KafkaProducerService (publication Kafka)
+- ✅ CleaningService (nettoyage des données)
+- ✅ ResamplingService (rééchantillonnage)
+- ✅ DenoisingService (débruitage)
+- ✅ FrequencyAnalysisService (analyse fréquentielle)
+- ✅ WindowingService (fenêtrage glissant)
+- ✅ PreprocessingService (orchestration principale)
 - ✅ TimescaleDBService (stockage TimescaleDB)
-- ✅ MinIOService (archivage MinIO)
-- ✅ OPCUAService (collecte OPC UA basique)
-- ✅ IngestionService (orchestration principale)
-- ✅ ApplicationLifecycle (gestion cycle de vie)
+- ✅ PreprocessingWorker (worker principal)
 
 **API REST** :
-- ✅ IngestionController (3 endpoints)
+- ✅ PreprocessingController (3 endpoints)
 
 **Tests** :
-- ✅ 9 classes de tests créées
+- ✅ 7 classes de tests créées
   - 6 tests unitaires (services)
-  - 2 tests d'intégration
-  - 1 test de contexte
-- ✅ Configuration de test (application-test.yml)
-- ✅ Testcontainers configuré
-- ✅ Couverture estimée > 70%
-
-**Configuration** :
-- ✅ KafkaConfig, MinIOConfig, OPCUAConfig, JacksonConfig
-
-**Scripts de Test** :
-- ✅ scripts/test-service-startup.ps1
-- ✅ scripts/validate-service.ps1
-- ✅ scripts/quick-test-service.ps1
-- ✅ scripts/start-and-test.ps1
+  - 1 test d'intégration
+- ✅ Configuration pytest (pytest.ini)
+- ✅ Fixtures partagées (conftest.py)
+- ✅ Couverture estimée > 80%
 
 **Documentation** :
-- ✅ docs/PHASE_2_VALIDATION.md
-- ✅ docs/PHASE_2_TESTING_GUIDE.md
+- ✅ README.md du service
+- ✅ Guides de progression
+- ✅ Documentation technique complète
 
-#### ✅ Finalisé
+**Database** :
+- ✅ Script SQL pour tables (`init-postgres-preprocessing.sql`)
+- ✅ Tables `preprocessed_sensor_data` et `windowed_sensor_data`
 
-- ✅ **Service complètement implémenté**
-- ✅ **Tous les tests passent**
-- ✅ **Documentation complète**
-- ✅ **Merge dans develop** ✅
-- ✅ **Tag v0.2.0 créé** ✅
+#### ⏳ Reste à faire (10%)
 
-#### ⏳ Optionnel (pour versions futures)
+**Validation finale** :
+- ⏳ Exécuter les tests et vérifier qu'ils passent
+- ⏳ Tester le service avec données réelles
+- ⏳ Valider l'intégration end-to-end
 
-- ⏳ Support Modbus (optionnel)
-- ⏳ Support MQTT (optionnel)
-- ⏳ Buffer edge pour résilience
-- ⏳ Tests de performance
-- ⏳ Tests avec données NASA C-MAPSS
-- ⏳ Documentation Swagger/OpenAPI
+**Finalisation** :
+- ⏳ Merge dans develop
+- ⏳ Tag v0.3.0 créé
 
 ---
 
@@ -105,129 +103,82 @@
 | **Phase 0** | ✅ COMPLÉTÉE | 100% |
 | **Phase 1** | ✅ COMPLÉTÉE | 100% |
 | **Phase 2** | ✅ COMPLÉTÉE | 100% |
-| **Phase 3-12** | ⏸️ EN ATTENTE | 0% |
+| **Phase 3** | 🚧 EN COURS | 90% |
+| **Phase 4-12** | ⏸️ EN ATTENTE | 0% |
 
-**Progression** : **3/13 phases = 23%**
+**Progression** : **3.9/13 phases = 30%**
 
 ---
 
 ## 🎯 Prochaines Étapes Immédiates
 
-### Étape 1 : Démarrer l'Infrastructure
-```powershell
-cd "C:\Users\DELL\Desktop\Predictive Maintenance Projet"
-.\scripts\start-and-test.ps1
-```
+### Phase 3 - Finalisation
 
-### Étape 2 : Démarrer le Service
-Dans un **nouveau terminal PowerShell** :
-```powershell
-cd "C:\Users\DELL\Desktop\Predictive Maintenance Projet\services\ingestion-iiot"
-$env:OPCUA_ENABLED = "false"
-$env:DATABASE_HOST = "localhost"
-$env:KAFKA_BOOTSTRAP_SERVERS = "localhost:9092"
-$env:MINIO_ENDPOINT = "http://localhost:9000"
-mvn spring-boot:run -Dspring-boot.run.profiles=local
-```
+1. **Exécuter les tests** (5-10 min)
+   ```bash
+   cd services/preprocessing
+   pip install -r requirements.txt
+   pytest
+   ```
 
-### Étape 3 : Tester les Endpoints
-Dans un **autre terminal** :
-```powershell
-# Health
-Invoke-RestMethod -Uri "http://localhost:8081/api/v1/ingestion/health" -Method GET
+2. **Tester le service** (optionnel)
+   ```bash
+   # Démarrer infrastructure
+   docker-compose -f infrastructure/docker-compose.yml up -d
+   
+   # Démarrer service
+   cd services/preprocessing
+   uvicorn app.main:app --host 0.0.0.0 --port 8082
+   ```
 
-# Status
-Invoke-RestMethod -Uri "http://localhost:8081/api/v1/ingestion/status" -Method GET
-
-# Ingestion
-$data = @{
-    timestamp = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
-    assetId = "ASSET001"
-    sensorId = "SENSOR001"
-    value = 25.5
-    unit = "°C"
-    quality = 2
-    sourceType = "TEST"
-} | ConvertTo-Json
-
-Invoke-RestMethod -Uri "http://localhost:8081/api/v1/ingestion/data" `
-    -Method POST -Body $data -ContentType "application/json"
-```
-
-### Étape 4 : Finaliser Phase 2
-Une fois les tests réussis :
-1. ✅ Merger `feature/service-ingestion-iiot` dans `develop`
-2. ✅ Créer tag `v0.2.0`
-3. ✅ Passer à Phase 3
+3. **Finaliser Phase 3**
+   - ✅ Merger `feature/service-preprocessing` dans `develop`
+   - ✅ Créer tag `v0.3.0`
+   - ✅ Passer à Phase 4
 
 ---
 
-## 📋 Checklist Phase 2
+## 📋 Checklist Phase 3
 
-- [x] Structure Spring Boot créée
+- [x] Structure Python/FastAPI créée
 - [x] Configuration complète
-- [x] Services implémentés
+- [x] Services implémentés (8/8)
 - [x] API REST créée
-- [x] Tests unitaires créés
+- [x] Tests unitaires créés (7 classes)
 - [x] Tests d'intégration créés
 - [x] Dockerfile créé
-- [x] Scripts de test créés
+- [x] Configuration Docker créée
 - [x] Documentation créée
-- [x] **Service testé et validé** ✅
-- [x] Tests exécutés avec succès ✅
-- [x] Merge dans develop ✅
-- [x] Tag v0.2.0 créé ✅
-- [ ] Documentation Swagger (optionnel)
+- [x] Scripts SQL créés
+- [ ] Tests exécutés avec succès ⏳
+- [ ] Service testé et validé ⏳
+- [ ] Merge dans develop ⏳
+- [ ] Tag v0.3.0 créé ⏳
 
 ---
 
 ## 🔍 Détails Techniques
 
 ### Services Créés
-- **IngestionIIoT** : Spring Boot service (85% complété)
-  - Port : 8081
-  - API : /api/v1/ingestion/*
-  - Health : /api/v1/ingestion/health
-  - Profil local : OPC UA désactivé
+- **IngestionIIoT** : Spring Boot service (100% complété)
+- **Prétraitement** : Python/FastAPI service (90% complété)
 
-### Tests Créés
-- **9 classes de tests** avec ~50+ tests
-- **Testcontainers** pour intégration
-- **Mockito** pour tests unitaires
+### Technologies Phase 3
+- Python 3.11+
+- FastAPI
+- Pandas, SciPy, NumPy
+- confluent-kafka
+- psycopg2 (TimescaleDB)
 
-### Fichiers Clés Phase 2
-- `services/ingestion-iiot/pom.xml`
-- `services/ingestion-iiot/src/main/java/...`
-- `services/ingestion-iiot/src/test/java/...`
-- `services/ingestion-iiot/Dockerfile`
-- `services/ingestion-iiot/src/main/resources/application-local.yml`
-
-### Scripts Créés
-- `scripts/start-and-test.ps1` : Démarrage infrastructure + instructions
-- `scripts/validate-service.ps1` : Validation endpoints
-- `scripts/quick-test-service.ps1` : Test rapide
-- `scripts/test-service-startup.ps1` : Test complet
-
-### Documentation
-- `docs/PHASE_2_VALIDATION.md` : Guide de validation
-- `docs/PHASE_2_TESTING_GUIDE.md` : Guide de test détaillé
+### Fichiers Clés Phase 3
+- `services/preprocessing/app/main.py`
+- `services/preprocessing/app/services/preprocessing_service.py`
+- `services/preprocessing/app/worker.py`
+- `services/preprocessing/Dockerfile`
+- `services/preprocessing/requirements.txt`
 
 ---
 
-## 💡 Recommandation
+**Statut Actuel** : 🚧 **Phase 3 à 90%** - Tous les services implémentés, tests et validation en cours
 
-**Avant de passer à la Phase 3**, il est recommandé de :
-1. ✅ Démarrer Docker Desktop
-2. ✅ Démarrer l'infrastructure avec `.\scripts\start-and-test.ps1`
-3. ✅ Démarrer le service IngestionIIoT
-4. ✅ Tester les 3 endpoints
-5. ✅ Valider que les données sont bien stockées (PostgreSQL, Kafka, MinIO)
-6. ✅ Finaliser et merger Phase 2
-
-Ensuite, nous pourrons démarrer la **Phase 3 : Service Prétraitement** en toute confiance.
-
----
-
-**Statut Actuel** : ✅ **Phase 2 COMPLÉTÉE** - Service IngestionIIoT finalisé, mergé dans develop, tag v0.2.0 créé
-
-**Prochaine Action** : Phase 3 - Service Prétraitement
+**Prochaine Action** : Exécuter les tests et finaliser Phase 3
