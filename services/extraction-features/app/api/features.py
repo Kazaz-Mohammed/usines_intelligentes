@@ -98,12 +98,18 @@ async def get_features(
     """
     try:
         timescale_db_service = TimescaleDBService()
-        features = await timescale_db_service.get_features_by_asset(
+        features = timescale_db_service.get_features_by_asset(
             asset_id,
-            start_time.isoformat() if start_time else None,
-            end_time.isoformat() if end_time else None,
-            feature_names
+            limit
         )
+        
+        # Filtrer par start_time, end_time et feature_names si spécifiés
+        if start_time:
+            features = [f for f in features if f.timestamp >= start_time]
+        if end_time:
+            features = [f for f in features if f.timestamp <= end_time]
+        if feature_names:
+            features = [f for f in features if f.feature_name in feature_names]
         
         # Limiter le nombre de résultats
         features = features[:limit]

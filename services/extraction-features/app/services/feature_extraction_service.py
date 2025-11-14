@@ -138,7 +138,7 @@ class FeatureExtractionService:
                 
                 # Stocker dans TimescaleDB
                 if all_features:
-                    await self.timescale_db_service.insert_extracted_features_batch(all_features)
+                    self.timescale_db_service.insert_extracted_features_batch(all_features)
                     logger.debug(f"Features stockées dans TimescaleDB pour asset={asset_id}: {len(all_features)} features")
                 
                 # Stocker dans Feast (si activé)
@@ -163,7 +163,7 @@ class FeatureExtractionService:
                     self._accumulate_data(asset_id, all_features)
                     feature_vector = await self._process_and_publish_batch(asset_id, asset_type)
                     if feature_vector:
-                        await self.timescale_db_service.insert_feature_vector(feature_vector)
+                        self.timescale_db_service.insert_feature_vector(feature_vector)
                         logger.debug(f"Vecteur de features stocké dans TimescaleDB pour asset={asset_id}")
                 
             except Exception as e:
@@ -227,7 +227,7 @@ class FeatureExtractionService:
                 )
             
             # Stocker dans TimescaleDB
-            await self.timescale_db_service.insert_feature_vector(feature_vector)
+            self.timescale_db_service.insert_feature_vector(feature_vector)
             logger.debug(f"Vecteur de features stocké dans TimescaleDB: {feature_vector.feature_vector_id}")
             
             # Stocker dans Feast (si activé)
@@ -236,7 +236,7 @@ class FeatureExtractionService:
                 logger.debug(f"Vecteur de features stocké dans Feast: {feature_vector.feature_vector_id}")
             
             # Publier sur Kafka
-            await self.kafka_producer.publish_feature_vector(feature_vector)
+            self.kafka_producer.publish_feature_vector(feature_vector)
             logger.info(f"Vecteur de features publié: {feature_vector.feature_vector_id}")
             
         except Exception as e:
@@ -332,7 +332,7 @@ class FeatureExtractionService:
                 )
             
             # Publier sur Kafka
-            await self.kafka_producer.publish_feature_vector(feature_vector)
+            self.kafka_producer.publish_feature_vector(feature_vector)
             logger.info(f"Vecteur de features publié en batch: {feature_vector_id}")
             
             # Nettoyer le buffer
