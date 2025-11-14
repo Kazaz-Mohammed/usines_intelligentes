@@ -156,7 +156,7 @@ class FeatureExtractionService:
                 # Publier sur Kafka
                 if mode == "streaming":
                     # Mode streaming: publier immédiatement
-                    await self.kafka_producer.publish_extracted_features_batch(all_features)
+                    self.kafka_producer.publish_extracted_features_batch(all_features)
                     logger.info(f"Publié {len(all_features)} features en streaming pour asset={asset_id}")
                 elif mode == "batch":
                     # Mode batch: accumuler et traiter par fenêtres
