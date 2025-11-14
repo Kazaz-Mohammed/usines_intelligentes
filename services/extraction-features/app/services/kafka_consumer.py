@@ -54,11 +54,15 @@ class KafkaConsumerService:
             max_messages: Nombre maximum de messages à consommer par batch
         """
         if not self.consumer:
+            self._create_consumer()
+        
+        if not self.consumer:
             raise RuntimeError("Consumer Kafka non initialisé")
         
         try:
             # S'abonner au topic
             self.consumer.subscribe([settings.kafka_topic_input_preprocessed])
+            logger.info(f"Abonné au topic: {settings.kafka_topic_input_preprocessed}")
             
             messages = []
             while True:
@@ -79,7 +83,7 @@ class KafkaConsumerService:
                         continue
                     else:
                         logger.error(f"Erreur Kafka: {msg.error()}")
-                        raise KafkaException(msg.error())
+                        continue  # Continuer au lieu de lever une exception
                 
                 # Ajouter le message
                 messages.append(msg)
@@ -96,9 +100,6 @@ class KafkaConsumerService:
         except Exception as e:
             logger.error(f"Erreur lors de la consommation: {e}", exc_info=True)
             raise
-        finally:
-            if self.consumer:
-                self.consumer.close()
     
     def consume_windowed_data(
         self,
@@ -113,11 +114,15 @@ class KafkaConsumerService:
             timeout: Timeout en secondes pour la consommation
         """
         if not self.consumer:
+            self._create_consumer()
+        
+        if not self.consumer:
             raise RuntimeError("Consumer Kafka non initialisé")
         
         try:
             # S'abonner au topic
             self.consumer.subscribe([settings.kafka_topic_input_windowed])
+            logger.info(f"Abonné au topic: {settings.kafka_topic_input_windowed}")
             
             while True:
                 msg = self.consumer.poll(timeout=timeout)
@@ -131,7 +136,7 @@ class KafkaConsumerService:
                         continue
                     else:
                         logger.error(f"Erreur Kafka: {msg.error()}")
-                        raise KafkaException(msg.error())
+                        continue  # Continuer au lieu de lever une exception
                 
                 # Désérialiser le message
                 windowed_data = self._deserialize_windowed_data(msg)
@@ -143,9 +148,6 @@ class KafkaConsumerService:
         except Exception as e:
             logger.error(f"Erreur lors de la consommation: {e}", exc_info=True)
             raise
-        finally:
-            if self.consumer:
-                self.consumer.close()
     
     def _deserialize_preprocessed_data(
         self,
@@ -172,15 +174,29 @@ class KafkaConsumerService:
         """Désérialise un message en WindowedDataReference"""
         try:
             # Désérialiser JSON
-            data = json.loads(msg.value().decode('utf-8'))
+            msg_value = msg.value()
+            if isinstance(msg_value, bytes):
+                msg_value = msg_value.decode('utf-8')
+            data = json.loads(msg_value)
+            
+            # Convertir timestamps si ce sont des chaînes
+            from datetime import datetime
+            if 'start_time' in data and isinstance(data['start_time'], str):
+                data['start_time'] = datetime.fromisoformat(data['start_time'].replace('Z', '+00:00'))
+            if 'end_time' in data and isinstance(data['end_time'], str):
+                data['end_time'] = datetime.fromisoformat(data['end_time'].replace('Z', '+00:00'))
             
             # Convertir sensor_data en PreprocessedDataReference
             if 'sensor_data' in data:
                 sensor_data = {}
                 for sensor_id, sensor_list in data['sensor_data'].items():
-                    sensor_data[sensor_id] = [
-                        PreprocessedDataReference(**item) for item in sensor_list
-                    ]
+                    processed_list = []
+                    for item in sensor_list:
+                        # Convertir timestamp si c'est une chaîne
+                        if 'timestamp' in item and isinstance(item['timestamp'], str):
+                            item['timestamp'] = datetime.fromisoformat(item['timestamp'].replace('Z', '+00:00'))
+                        processed_list.append(PreprocessedDataReference(**item))
+                    sensor_data[sensor_id] = processed_list
                 data['sensor_data'] = sensor_data
             
             # Créer WindowedDataReference
@@ -188,6 +204,7 @@ class KafkaConsumerService:
             
         except Exception as e:
             logger.error(f"Erreur lors de la désérialisation: {e}", exc_info=True)
+            logger.debug(f"Message value: {msg.value() if hasattr(msg, 'value') else 'N/A'}")
             return None
     
     def close(self):

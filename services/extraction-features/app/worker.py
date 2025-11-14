@@ -4,7 +4,9 @@ Worker en arrière-plan pour consommer Kafka et extraire les features
 import logging
 import signal
 import sys
-from typing import Optional
+import asyncio
+import threading
+from typing import Optional, List
 from datetime import datetime
 
 from app.config import settings
@@ -72,25 +74,37 @@ class FeatureExtractionWorker:
         def preprocessed_data_handler(preprocessed_data: List[PreprocessedDataReference]):
             """Handler pour les données prétraitées"""
             try:
-                import asyncio
+                # Créer une nouvelle boucle d'événements pour cette tâche
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-                loop.run_until_complete(
-                    self.feature_extraction_service.process_preprocessed_data(
-                        preprocessed_data,
-                        mode="streaming"
+                try:
+                    loop.run_until_complete(
+                        self.feature_extraction_service.process_preprocessed_data(
+                            preprocessed_data,
+                            mode="streaming"
+                        )
                     )
-                )
-                loop.close()
+                finally:
+                    loop.close()
             except Exception as e:
                 logger.error(f"Erreur lors du traitement des données prétraitées: {e}", exc_info=True)
         
-        # Démarrer la consommation
-        self.kafka_consumer.consume_preprocessed_data(
-            preprocessed_data_handler,
-            timeout=1.0,
-            max_messages=100
-        )
+        # Démarrer la consommation dans un thread séparé
+        def consume_thread():
+            try:
+                while self.running:
+                    self.kafka_consumer.consume_preprocessed_data(
+                        preprocessed_data_handler,
+                        timeout=1.0,
+                        max_messages=100
+                    )
+            except Exception as e:
+                logger.error(f"Erreur dans le thread de consommation: {e}", exc_info=True)
+                self.running = False
+        
+        thread = threading.Thread(target=consume_thread, daemon=True)
+        thread.start()
+        logger.info("Thread de consommation démarré")
     
     def _start_batch_mode(self):
         """Démarre le mode batch"""
@@ -100,21 +114,33 @@ class FeatureExtractionWorker:
         def windowed_data_handler(windowed_data: WindowedDataReference):
             """Handler pour les fenêtres de données"""
             try:
-                import asyncio
+                # Créer une nouvelle boucle d'événements pour cette tâche
                 loop = asyncio.new_event_loop()
                 asyncio.set_event_loop(loop)
-                loop.run_until_complete(
-                    self.feature_extraction_service.process_windowed_data(windowed_data)
-                )
-                loop.close()
+                try:
+                    loop.run_until_complete(
+                        self.feature_extraction_service.process_windowed_data(windowed_data)
+                    )
+                finally:
+                    loop.close()
             except Exception as e:
                 logger.error(f"Erreur lors du traitement des fenêtres de données: {e}", exc_info=True)
         
-        # Démarrer la consommation
-        self.kafka_consumer.consume_windowed_data(
-            windowed_data_handler,
-            timeout=1.0
-        )
+        # Démarrer la consommation dans un thread séparé
+        def consume_thread():
+            try:
+                while self.running:
+                    self.kafka_consumer.consume_windowed_data(
+                        windowed_data_handler,
+                        timeout=1.0
+                    )
+            except Exception as e:
+                logger.error(f"Erreur dans le thread de consommation: {e}", exc_info=True)
+                self.running = False
+        
+        thread = threading.Thread(target=consume_thread, daemon=True)
+        thread.start()
+        logger.info("Thread de consommation démarré")
     
     def stop(self):
         """Arrête le worker"""
