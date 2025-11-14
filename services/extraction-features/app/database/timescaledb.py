@@ -59,7 +59,7 @@ class TimescaleDBService:
         finally:
             self.pool.putconn(conn)
     
-    async def insert_extracted_feature(self, feature: ExtractedFeature):
+    def insert_extracted_feature(self, feature: ExtractedFeature):
         """
         Insère une seule feature extraite dans la table extracted_features.
         """
@@ -92,7 +92,7 @@ class TimescaleDBService:
             logger.error(f"Erreur lors de l'insertion de la feature: {e}", exc_info=True)
             raise
     
-    async def insert_extracted_features_batch(self, features: List[ExtractedFeature]):
+    def insert_extracted_features_batch(self, features: List[ExtractedFeature]):
         """
         Insère un lot de features extraites dans la table extracted_features.
         """
@@ -131,7 +131,7 @@ class TimescaleDBService:
             logger.error(f"Erreur lors de l'insertion du lot de features: {e}", exc_info=True)
             raise
     
-    async def insert_feature_vector(self, feature_vector: ExtractedFeaturesVector):
+    def insert_feature_vector(self, feature_vector: ExtractedFeaturesVector):
         """
         Insère un vecteur de features dans la table extracted_feature_vectors.
         """
@@ -165,7 +165,7 @@ class TimescaleDBService:
             logger.error(f"Erreur lors de l'insertion du vecteur de features: {e}", exc_info=True)
             raise
     
-    async def insert_feature_vectors_batch(self, feature_vectors: List[ExtractedFeaturesVector]):
+    def insert_feature_vectors_batch(self, feature_vectors: List[ExtractedFeaturesVector]):
         """
         Insère un lot de vecteurs de features dans la table extracted_feature_vectors.
         """
@@ -205,21 +205,17 @@ class TimescaleDBService:
             logger.error(f"Erreur lors de l'insertion du lot de vecteurs de features: {e}", exc_info=True)
             raise
     
-    async def get_features_by_asset(
+    def get_features_by_asset(
         self,
         asset_id: str,
-        start_time: Optional[str] = None,
-        end_time: Optional[str] = None,
-        feature_names: Optional[List[str]] = None
+        limit: int = 100
     ) -> List[ExtractedFeature]:
         """
         Récupère les features pour un asset donné.
         
         Args:
             asset_id: ID de l'asset
-            start_time: Timestamp de début (optionnel)
-            end_time: Timestamp de fin (optionnel)
-            feature_names: Liste de noms de features à récupérer (optionnel)
+            limit: Nombre maximum de features à récupérer
         
         Returns:
             Liste de features extraites
@@ -231,24 +227,11 @@ class TimescaleDBService:
                         SELECT timestamp, asset_id, sensor_id, feature_name, feature_value, feature_type, metadata
                         FROM extracted_features
                         WHERE asset_id = %s
+                        ORDER BY timestamp DESC
+                        LIMIT %s
                     """
-                    params = [asset_id]
                     
-                    if start_time:
-                        query += " AND timestamp >= %s"
-                        params.append(start_time)
-                    
-                    if end_time:
-                        query += " AND timestamp <= %s"
-                        params.append(end_time)
-                    
-                    if feature_names:
-                        query += " AND feature_name = ANY(%s)"
-                        params.append(feature_names)
-                    
-                    query += " ORDER BY timestamp DESC"
-                    
-                    cur.execute(query, params)
+                    cur.execute(query, (asset_id, limit))
                     rows = cur.fetchall()
                     
                     features = []
@@ -267,5 +250,5 @@ class TimescaleDBService:
                     return features
         except Exception as e:
             logger.error(f"Erreur lors de la récupération des features: {e}", exc_info=True)
-            raise
+            return []
 
