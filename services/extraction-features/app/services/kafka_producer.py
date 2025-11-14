@@ -43,7 +43,7 @@ class KafkaProducerService:
         else:
             logger.debug(f"Message livré: {msg.topic()}[{msg.partition()}]@{msg.offset()}")
     
-    async def publish_extracted_feature(self, feature: ExtractedFeature):
+    def publish_extracted_feature(self, feature: ExtractedFeature):
         """
         Publie une feature extraite sur Kafka
         
@@ -73,7 +73,7 @@ class KafkaProducerService:
             logger.error(f"Erreur lors de la publication: {e}", exc_info=True)
             raise
     
-    async def publish_extracted_features_batch(self, features: List[ExtractedFeature]):
+    def publish_extracted_features_batch(self, features: List[ExtractedFeature]):
         """
         Publie un lot de features extraites sur Kafka
         
@@ -104,7 +104,7 @@ class KafkaProducerService:
             logger.error(f"Erreur lors de la publication du lot: {e}", exc_info=True)
             raise
     
-    async def publish_feature_vector(self, feature_vector: ExtractedFeaturesVector):
+    def publish_feature_vector(self, feature_vector: ExtractedFeaturesVector):
         """
         Publie un vecteur de features sur Kafka
         
@@ -134,7 +134,7 @@ class KafkaProducerService:
             logger.error(f"Erreur lors de la publication: {e}", exc_info=True)
             raise
     
-    async def publish_feature_vectors_batch(self, feature_vectors: List[ExtractedFeaturesVector]):
+    def publish_feature_vectors_batch(self, feature_vectors: List[ExtractedFeaturesVector]):
         """
         Publie un lot de vecteurs de features sur Kafka
         
