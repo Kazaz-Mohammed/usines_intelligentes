@@ -36,10 +36,10 @@
 
 ## 🚧 Phase en Cours
 
-### Phase 3 : Service Prétraitement - ✅ **100% COMPLÉTÉE ET VALIDÉE**
+### Phase 3 : Service Prétraitement - ✅ **100% FINALISÉE**
 
 **Branche** : `develop` (merged)
-**Tag** : v0.3.0 (à créer)
+**Tag** : v0.3.0 ✅
 
 #### ✅ Complété et Validé
 
@@ -97,7 +97,7 @@
 - ✅ **Scripts de test créés**
 - ✅ **Merge dans develop** ✅
 - ✅ **Tests validés (29/29)** ✅
-- ⏳ **Tag v0.3.0 créé** (en attente)
+- ✅ **Tag v0.3.0 créé** ✅
 
 ---
 
