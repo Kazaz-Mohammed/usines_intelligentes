@@ -4,6 +4,7 @@ Service de consommation Kafka pour Extraction Features
 import logging
 import json
 from typing import List, Optional, Callable
+from datetime import datetime
 from confluent_kafka import Consumer, KafkaError, KafkaException
 from confluent_kafka.serialization import SerializationContext, MessageField
 from confluent_kafka.schema_registry import SchemaRegistryClient
@@ -180,7 +181,6 @@ class KafkaConsumerService:
             data = json.loads(msg_value)
             
             # Convertir timestamps si ce sont des chaînes
-            from datetime import datetime
             if 'start_time' in data and isinstance(data['start_time'], str):
                 data['start_time'] = datetime.fromisoformat(data['start_time'].replace('Z', '+00:00'))
             if 'end_time' in data and isinstance(data['end_time'], str):
