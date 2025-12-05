@@ -64,59 +64,63 @@
 - ✅ Documentation complète
 - ✅ **Tag v0.6.0 créé**
 
-### Phase 7 : Service PrédictionRUL 🚧 **60% COMPLÉTÉE**
+### Phase 7 : Service PrédictionRUL ✅ **100% COMPLÉTÉE**
 - ✅ Service Python/FastAPI complet
-- ✅ 3 modèles ML implémentés :
-  - Isolation Forest (PyOD)
-  - One-Class SVM (PyOD)
-  - LSTM Autoencoder (PyTorch)
-- ✅ Service d'orchestration des modèles
+- ✅ 4 modèles ML implémentés :
+  - LSTM (PyTorch)
+  - GRU (PyTorch)
+  - TCN - Temporal Convolutional Network (PyTorch)
+  - XGBoost (ensemble baseline)
+- ✅ Service d'orchestration des modèles (ensemble)
+- ✅ Transfer Learning depuis NASA C-MAPSS
+- ✅ Calibration et quantification d'incertitude
 - ✅ API REST avec endpoints
 - ✅ Consumer/Producer Kafka
 - ✅ Intégration MLflow (tracking et registry)
 - ✅ Journalisation PostgreSQL
-- ✅ Endpoint GET /api/v1/anomalies/ avec filtres et pagination
-- ✅ 83 tests passent (100%)
+- ✅ Endpoint GET /api/v1/rul/ avec filtres et pagination
+- ✅ Endpoint POST /api/v1/rul/predict pour prédiction temps-réel
+- ✅ Tests complets (tous passants)
 - ✅ Fichier .env configuré
-- ✅ Documentation complète (README, guides)
-- ✅ **Prêt pour tag v0.6.0**
+- ✅ Documentation complète (README, guides, ARCHITECTURE.md)
+- ✅ **Tag v0.7.0 créé**
 
 ---
 
 ## 🚧 Phase en Cours
 
-### Phase 7 : Service PrédictionRUL 🚧 **60% COMPLÉTÉE**
+### Phase 8 : Service OrchestrateurMaintenance 🚧 **EN COURS**
 
 **Objectifs** :
-- Modèles LSTM/GRU/TCN pour prédiction RUL (Remaining Useful Life)
-- Transfer learning depuis NASA C-MAPSS
-- Calibration et quantification d'incertitude
-- Service FastAPI pour prédiction temps-réel
+- Orchestration et planification optimisée des interventions
+- Moteur de règles métier (Drools)
+- Optimisation combinatoire (OR-Tools)
+- Gestion des ordres de travail
 
 **Tâches principales** :
-1. **Modèles RUL (PyTorch)**
-   - Architecture LSTM/GRU
-   - Architecture TCN (Temporal Convolutional Network)
-   - XGBoost comme baseline
+1. **Moteur de Règles (Drools)**
+   - Règles métier pour priorisation
+   - Évaluation de criticité
+   - Décisions automatiques
 
-2. **Transfer Learning**
-   - Pré-entraînement sur NASA C-MAPSS
-   - Fine-tuning sur données usine simulées
+2. **Optimisation (OR-Tools)**
+   - Planification optimisée
+   - Contraintes (techniciens, fenêtres, sécurité)
+   - Minimisation des coûts
 
-3. **Calibration**
-   - Intervalles de confiance
-   - Quantification incertitude
-   - Métriques MAE, RMSE
+3. **Gestion des Interventions**
+   - Création d'ordres de travail
+   - Attribution de techniciens
+   - Suivi des interventions
 
-4. **Service de Prédiction**
-   - API FastAPI
-   - Prédiction temps-réel
-   - Caching des prédictions
+4. **Service d'Orchestration**
+   - API Spring Boot
+   - Consommation Kafka (anomalies, RUL)
+   - Publication Kafka (work orders)
 
-5. **MLflow**
-   - Tracking expériences
-   - Comparaison modèles
-   - Best model selection
+5. **Intégration**
+   - Communication avec autres services
+   - Synchronisation avec CMMS/ERP
 
 **Durée estimée** : 3-4 jours
 
@@ -133,30 +137,31 @@
 | **Phase 4** | Service ExtractionFeatures | ✅ COMPLÉTÉE | 100% |
 | **Phase 5** | Data Mining KNIME | ⏸️ SAUTÉE | 0% |
 | **Phase 6** | Service DétectionAnomalies | ✅ COMPLÉTÉE | 100% |
-| **Phase 7** | Service PrédictionRUL | 🚧 EN COURS | 60% |
-| **Phase 8** | Service OrchestrateurMaintenance | ⏸️ EN ATTENTE | 0% |
+| **Phase 7** | Service PrédictionRUL | ✅ COMPLÉTÉE | 100% |
+| **Phase 8** | Service OrchestrateurMaintenance | 🚧 EN COURS | 80% |
 | **Phase 9** | Service DashboardUsine | ⏸️ EN ATTENTE | 0% |
 | **Phase 10** | Intégration E2E | ⏸️ EN ATTENTE | 0% |
 | **Phase 11** | Déploiement Kubernetes | ⏸️ EN ATTENTE | 0% |
 | **Phase 12** | Finalisation Documentation | ⏸️ EN ATTENTE | 0% |
 
-**Progression Globale** : **6.6/13 phases = 51%** (ou 6.6/12 si on exclut Phase 5 = 55%)
+**Progression Globale** : **7.6/13 phases = 58%** (ou 7.6/12 si on exclut Phase 5 = 63%)
 
 ---
 
 ## 🎯 Prochaines Actions
 
-### Immédiat (Finalisation Phase 6)
-1. ✅ Créer tag `v0.6.0` pour Phase 6
+### Immédiat (Finalisation Phase 7)
+1. ✅ Créer tag `v0.7.0` pour Phase 7
 2. ✅ Merger dans `develop` si nécessaire
 3. ✅ Documenter la complétion
 
-### Prochaine Phase (Phase 7)
-**Service PrédictionRUL** :
-- Créer structure du service Python/FastAPI
-- Implémenter modèles LSTM/GRU/TCN
-- Transfer learning NASA C-MAPSS
-- API REST pour prédiction
+### Prochaine Phase (Phase 8)
+**Service OrchestrateurMaintenance** :
+- Créer structure du service Spring Boot
+- Implémenter moteur de règles Drools
+- Optimisation avec OR-Tools
+- Planification des interventions
+- API REST pour gestion des ordres de travail
 - Tests et documentation
 
 **Durée estimée** : 3-4 jours
@@ -166,12 +171,12 @@
 ## 📈 Statistiques
 
 ### Services Créés
-- ✅ **5/7 services microservices** (71%)
+- ✅ **6/7 services microservices** (86%)
   - ✅ IngestionIIoT
   - ✅ Prétraitement
   - ✅ ExtractionFeatures
   - ✅ DétectionAnomalies
-  - 🚧 PrédictionRUL (60% complété)
+  - ✅ PrédictionRUL
   - ⏳ OrchestrateurMaintenance
   - ⏳ DashboardUsine
 
@@ -188,22 +193,24 @@
 
 ---
 
-## ✅ Checklist Phase 6 (Dernière complétée)
+## ✅ Checklist Phase 7 (Dernière complétée)
 
 - [x] Structure de base (config, models, main)
-- [x] Modèles PyOD (Isolation Forest, One-Class SVM)
-- [x] LSTM Autoencoder (PyTorch)
-- [x] Service d'orchestration
+- [x] Modèles RUL (LSTM, GRU, TCN, XGBoost)
+- [x] Service d'orchestration (ensemble)
+- [x] Transfer Learning NASA C-MAPSS
+- [x] Calibration et intervalles de confiance
 - [x] API FastAPI avec endpoints
 - [x] Consumer/Producer Kafka
 - [x] Intégration MLflow
 - [x] Journalisation PostgreSQL
-- [x] Endpoint GET /api/v1/anomalies/
-- [x] Tests complets (83 tests)
+- [x] Endpoint GET /api/v1/rul/
+- [x] Endpoint POST /api/v1/rul/predict
+- [x] Tests complets (tous passants)
 - [x] Documentation complète
 - [x] Fichier .env configuré
-- [ ] Tag v0.6.0 (à créer)
-- [ ] Merge dans develop (si nécessaire)
+- [x] Tag v0.7.0 créé
+- [x] Merge dans develop
 
 ---
 
@@ -211,12 +218,23 @@
 
 1. **Phase 5 (KNIME)** a été sautée pour gagner du temps - peut être faite plus tard
 2. **Phase 6** est complète avec tous les composants :
-   - 3 modèles ML
+   - 3 modèles ML (Isolation Forest, One-Class SVM, LSTM Autoencoder)
    - Kafka integration
    - MLflow tracking
    - PostgreSQL journalisation
-3. **Prochaine étape** : Phase 7 (Prédiction RUL) - similaire à Phase 6 mais pour RUL
-4. **Architecture** : Les services communiquent via Kafka et stockent dans PostgreSQL/TimescaleDB
+   - Endpoint GET /api/v1/anomalies/
+   - Tag v0.6.0 créé
+3. **Phase 7** est complète avec tous les composants :
+   - 4 modèles ML (LSTM, GRU, TCN, XGBoost)
+   - Transfer Learning NASA C-MAPSS
+   - Calibration et quantification d'incertitude
+   - Kafka integration
+   - MLflow tracking
+   - PostgreSQL journalisation
+   - Endpoints GET /api/v1/rul/ et POST /api/v1/rul/predict
+   - Tag v0.7.0 créé
+4. **Prochaine étape** : Phase 8 (OrchestrateurMaintenance) - orchestration et planification
+5. **Architecture** : Les services communiquent via Kafka et stockent dans PostgreSQL/TimescaleDB
 
 ---
 
