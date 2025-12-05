@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import numpy as np
 
 from app.services.wavelet_features_service import WaveletFeaturesService
-from app.models.feature_data import PreprocessedDataReference
+from app.models.feature_data import PreprocessedDataReference, ExtractedFeature
 
 
 class TestWaveletFeaturesService:

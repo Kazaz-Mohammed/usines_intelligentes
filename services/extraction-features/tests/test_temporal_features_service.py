@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import numpy as np
 
 from app.services.temporal_features_service import TemporalFeaturesService
-from app.models.feature_data import PreprocessedDataReference
+from app.models.feature_data import PreprocessedDataReference, ExtractedFeature
 
 
 class TestTemporalFeaturesService:

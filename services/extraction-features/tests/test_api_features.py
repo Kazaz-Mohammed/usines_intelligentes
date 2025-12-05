@@ -2,11 +2,32 @@
 Tests pour l'API REST
 """
 import pytest
-from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
+import httpx
 
-from app.main import app
 from app.api.features import FeatureExtractionServiceSingleton
+
+
+# Créer une instance d'app FastAPI sans lifespan pour les tests
+from fastapi import FastAPI
+from app.api.features import router as features_router
+from app.config import settings
+
+test_app = FastAPI(
+    title="Extraction Features Service Test",
+    description="Service d'extraction de caractéristiques temporelles et fréquentielles pour la maintenance prédictive",
+    version="0.1.0"
+)
+
+test_app.include_router(features_router, prefix="/api/v1/features", tags=["Features"])
+
+@test_app.get("/")
+async def root():
+    return {"message": "Extraction Features Service is running"}
+
+@test_app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": settings.service_name, "version": "0.1.0"}
 
 
 class TestAPIFeatures:
@@ -15,7 +36,10 @@ class TestAPIFeatures:
     @pytest.fixture
     def client(self):
         """Client de test FastAPI"""
-        return TestClient(app)
+        # Utiliser httpx directement avec ASGITransport
+        from httpx import ASGITransport
+        transport = ASGITransport(app=test_app)
+        return httpx.Client(transport=transport, base_url="http://test")
 
     @pytest.fixture
     def mock_feature_extraction_service(self):

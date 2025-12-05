@@ -142,7 +142,13 @@ class TestTimescaleDBService:
 
     def test_close(self, timescaledb_service):
         """Test fermeture du service"""
-        timescaledb_service.close()
-        # Vérifier que le pool est fermé
-        assert timescaledb_service.pool is None or hasattr(timescaledb_service.pool, 'closeall')
+        # Ne pas fermer si le pool n'est pas initialisé
+        if timescaledb_service.pool:
+            timescaledb_service.close()
+            # Vérifier que le pool est fermé
+            assert timescaledb_service.pool is None
+        else:
+            # Si le pool n'est pas initialisé, close() devrait gérer gracieusement
+            timescaledb_service.close()
+            assert timescaledb_service.pool is None
 

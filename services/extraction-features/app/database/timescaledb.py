@@ -251,4 +251,15 @@ class TimescaleDBService:
         except Exception as e:
             logger.error(f"Erreur lors de la récupération des features: {e}", exc_info=True)
             return []
+    
+    def close(self):
+        """Ferme le pool de connexions"""
+        if self.pool:
+            try:
+                self.pool.closeall()
+                logger.info("Pool de connexions TimescaleDB fermé")
+            except Exception as e:
+                logger.error(f"Erreur lors de la fermeture du pool: {e}", exc_info=True)
+            finally:
+                self.pool = None
 

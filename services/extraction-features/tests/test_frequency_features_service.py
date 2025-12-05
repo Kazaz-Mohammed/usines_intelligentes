@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 import numpy as np
 
 from app.services.frequency_features_service import FrequencyFeaturesService
-from app.models.feature_data import PreprocessedDataReference
+from app.models.feature_data import PreprocessedDataReference, ExtractedFeature
 
 
 class TestFrequencyFeaturesService:
